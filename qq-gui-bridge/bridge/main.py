@@ -418,7 +418,7 @@ def wait_for_chat(engine: OcrEngine, hwnd, config: dict):
 
 def search_group_memory(query: str, config: dict):
     memory_options = config.get("memory", {})
-    workspace = Path(memory_options.get("workspace", r"C:\path\to\qq-workspace"))
+    workspace = Path(memory_options.get("workspace", r"D:\aiapp\OpenCode\qq-workspace"))
     script = workspace / "tools" / "memory" / "search_group.py"
     if not script.exists():
         return []
@@ -868,6 +868,8 @@ def run(config: dict, once: bool = False, dry_run: bool = False) -> int:
                 continue
 
             LOG.info("owner reply: %s", reply)
+            if outbox_state is not None:
+                drain_outbox(outbox_state, config, hwnd, engine, window_options, "private", dry_run)
             if not ensure_chat(hwnd, engine, config, window_options, "private"):
                 LOG.error("chat not private; owner reply dropped")
                 time.sleep(interval)
@@ -933,6 +935,8 @@ def run(config: dict, once: bool = False, dry_run: bool = False) -> int:
                 continue
 
             LOG.info("reply: %s", reply)
+            if outbox_state is not None:
+                drain_outbox(outbox_state, config, hwnd, engine, window_options, "group", dry_run)
             if not ensure_chat(hwnd, engine, config, window_options, "group"):
                 LOG.error("chat not group; reply dropped")
                 time.sleep(interval)
@@ -1007,6 +1011,8 @@ def run(config: dict, once: bool = False, dry_run: bool = False) -> int:
                 continue
 
             LOG.info("followup reply: %s", reply)
+            if outbox_state is not None:
+                drain_outbox(outbox_state, config, hwnd, engine, window_options, "group", dry_run)
             if not ensure_chat(hwnd, engine, config, window_options, "group"):
                 LOG.error("chat not group; followup reply dropped")
                 time.sleep(interval)
@@ -1081,6 +1087,8 @@ def run(config: dict, once: bool = False, dry_run: bool = False) -> int:
             continue
 
         LOG.info("ambient reply: %s", reply)
+        if outbox_state is not None:
+            drain_outbox(outbox_state, config, hwnd, engine, window_options, "group", dry_run)
         if not ensure_chat(hwnd, engine, config, window_options, "group"):
             LOG.error("chat not group; ambient reply dropped")
             time.sleep(interval)
