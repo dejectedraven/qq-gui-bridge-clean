@@ -254,7 +254,7 @@ class MessageTests(unittest.TestCase):
 
     def test_build_owner_prompt(self):
         config = {
-            "qq": {"owner_qq": "873447614"},
+            "qq": {"owner_qq": "123456789"},
             "trigger": {"group_name": "嘛咪哄养老院"},
             "ambient": {"context_messages": 12},
         }
@@ -264,7 +264,7 @@ class MessageTests(unittest.TestCase):
         ]
         prompt = build_owner_prompt(messages, config)
         self.assertIn("[QQ] tier=owner", prompt)
-        self.assertIn("sender_qq=873447614", prompt)
+        self.assertIn("sender_qq=123456789", prompt)
         self.assertIn("msg_id=private-", prompt)
         self.assertIn("[你]: 好的主人", prompt)
         self.assertIn("帮我看下磁盘", prompt)
