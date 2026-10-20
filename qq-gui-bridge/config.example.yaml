@@ -68,7 +68,7 @@ permissions:
   cleanup_tmp_after_reply: true
 
 opencode:
-  base_url: "http://127.0.0.1:4100"
+  base_url: "http://127.0.0.1:41873"
   agent: "qq-guest"
   owner_agent: "qq-owner"
   model: "opencode/deepseek-v4.1-flash-free"

@@ -30,8 +30,10 @@ class OpenCodeClient:
             except (OSError, json.JSONDecodeError):
                 self.session_cache = {}
 
-        username = os.environ.get(options.get("username_env", "OPENCODE_SERVER_USERNAME"), "opencode")
-        password = os.environ.get(options.get("password_env", "OPENCODE_SERVER_PASSWORD"), "")
+        self.username_env = options.get("username_env", "OPENCODE_SERVER_USERNAME")
+        self.password_env = options.get("password_env", "OPENCODE_SERVER_PASSWORD")
+        username = os.environ.get(self.username_env, "opencode")
+        password = os.environ.get(self.password_env, "")
         self.auth = (username, password) if password else None
 
         if "/" in self.model:
@@ -63,6 +65,11 @@ class OpenCodeClient:
             f"-ArgumentList @('serve','--port','{port}','--hostname','{host}') "
             f"-WorkingDirectory '{self.server_cwd}' -WindowStyle Hidden"
         )
+        env = {
+            key: value
+            for key, value in os.environ.items()
+            if key not in (self.username_env, self.password_env)
+        }
         try:
             subprocess.Popen(
                 ["powershell", "-NoProfile", "-Command", script],
@@ -70,6 +77,7 @@ class OpenCodeClient:
                 stdin=subprocess.DEVNULL,
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
+                env=env,
             )
         except OSError as exc:
             LOG.error("opencode server start failed: %s", exc)

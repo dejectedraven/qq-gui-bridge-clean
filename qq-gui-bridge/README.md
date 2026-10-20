@@ -86,6 +86,19 @@ cd C:\path\to\qq-gui-bridge
 
 如果 `OPENCODE_SERVER_PASSWORD` 在当前环境已设置，server 和 bridge 会使用 Basic Auth；两者必须在同一环境变量下启动，或者都不设置。
 
+## 一键开关
+
+双击 `qq-bridge-toggle.bat`：运行中则关闭，已停止则开启。
+
+```powershell
+.\qq-bridge-toggle.ps1                   # 切换
+.\qq-bridge-toggle.ps1 -Action on        # 开启
+.\qq-bridge-toggle.ps1 -Action off       # 关闭
+.\qq-bridge-toggle.ps1 -Action status    # 查看状态
+```
+
+关闭会同时结束看护、桥接和 41873 端口上的 OpenCode Server；开启时由看护自动拉起桥接与 server。
+
 ## 触发条件
 
 桥接只监听 `trigger.group_name` 指定的群，并满足：

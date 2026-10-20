@@ -425,7 +425,7 @@ def wait_for_chat(engine: OcrEngine, hwnd, config: dict):
 
 def search_group_memory(query: str, config: dict):
     memory_options = config.get("memory", {})
-    workspace = Path(memory_options.get("workspace", r"D:\aiapp\OpenCode\qq-workspace"))
+    workspace = Path(memory_options.get("workspace") or Path(__file__).resolve().parents[1].parent / "qq-workspace")
     script = workspace / "tools" / "memory" / "search_group.py"
     if not script.exists():
         return []

@@ -40,13 +40,13 @@ from bridge.sidebar import (
     unread_entries,
 )
 
-NICKNAME = "你的机器人昵称"
+NICKNAME = "子思于归的使魔"
 
 
 def client_config():
     return {
         "opencode": {
-            "base_url": "http://127.0.0.1:4100",
+            "base_url": "http://127.0.0.1:41873",
             "agent": "qq-guest",
             "model": "opencode/deepseek-v4.1-flash-free",
         }
@@ -59,41 +59,41 @@ def row(text, x0=0, y=0):
 
 class TriggerTests(unittest.TestCase):
     def test_trigger_row(self):
-        self.assertTrue(is_trigger_row(row("@你的机器人昵称 今日塔罗"), NICKNAME, 650))
-        self.assertFalse(is_trigger_row(row("LV100殿堂你的机器人昵称"), NICKNAME, 650))
+        self.assertTrue(is_trigger_row(row("@子思于归的使魔 今日塔罗"), NICKNAME, 650))
+        self.assertFalse(is_trigger_row(row("LV100殿堂子思于归的使魔"), NICKNAME, 650))
         self.assertFalse(is_trigger_row(row("12:34"), NICKNAME, 650))
-        self.assertFalse(is_trigger_row(row("@你的机器人昵称 今日塔罗", x0=500), NICKNAME, 650))
+        self.assertFalse(is_trigger_row(row("@子思于归的使魔 今日塔罗", x0=500), NICKNAME, 650))
 
     def test_find_last_trigger(self):
         rows = [
             row("hello"),
-            row("@你的机器人昵称 A"),
+            row("@子思于归的使魔 A"),
             row("other"),
-            row("@你的机器人昵称 B"),
+            row("@子思于归的使魔 B"),
         ]
         self.assertEqual(find_trigger(rows, NICKNAME, 650), 3)
 
     def test_count_triggers(self):
         rows = [
             row("LV100殿堂禄时节"),
-            row("@你的机器人昵称 今日塔罗"),
+            row("@子思于归的使魔 今日塔罗"),
             row("LV100殿堂禄时节"),
-            row("@你的机器人昵称 今日塔罗"),
+            row("@子思于归的使魔 今日塔罗"),
             row("LV100殿堂禄时节"),
-            row("@你的机器人昵称 今日塔罗"),
+            row("@子思于归的使魔 今日塔罗"),
         ]
         present = count_triggers(rows, NICKNAME, 650)
-        self.assertEqual(present["@你的机器人昵称今日塔罗"], 3)
+        self.assertEqual(present["@子思于归的使魔今日塔罗"], 3)
 
     def test_trigger_key_survives_sender_flap(self):
-        without_label = [row("@你的机器人昵称 我喜欢你", x0=70)]
-        with_label = [row("LV100殿堂禄时节", x0=60), row("@你的机器人昵称 我喜欢你", x0=70)]
-        key = "@你的机器人昵称我喜欢你"
+        without_label = [row("@子思于归的使魔 我喜欢你", x0=70)]
+        with_label = [row("LV100殿堂禄时节", x0=60), row("@子思于归的使魔 我喜欢你", x0=70)]
+        key = "@子思于归的使魔我喜欢你"
         self.assertEqual(count_triggers(without_label, NICKNAME, 650), {key: 1})
         self.assertEqual(count_triggers(with_label, NICKNAME, 650), {key: 1})
 
     def test_prime_suppresses_existing_triggers(self):
-        rows = [row("LV2初研", x0=60), row("@你的机器人昵称 早安", x0=70)]
+        rows = [row("LV2初研", x0=60), row("@子思于归的使魔 早安", x0=70)]
         primed = count_triggers(rows, NICKNAME, 650)
         self.assertEqual(len(primed), 1)
         handled = dict(primed)
@@ -101,11 +101,11 @@ class TriggerTests(unittest.TestCase):
         self.assertEqual(handled, primed)
 
     def test_update_handled_counts(self):
-        handled = {"@你的机器人昵称今日塔罗": 2}
-        update_handled_counts(handled, {"@你的机器人昵称今日塔罗": 1})
-        self.assertEqual(handled["@你的机器人昵称今日塔罗"], 1)
+        handled = {"@子思于归的使魔今日塔罗": 2}
+        update_handled_counts(handled, {"@子思于归的使魔今日塔罗": 1})
+        self.assertEqual(handled["@子思于归的使魔今日塔罗"], 1)
         update_handled_counts(handled, {})
-        self.assertNotIn("@你的机器人昵称今日塔罗", handled)
+        self.assertNotIn("@子思于归的使魔今日塔罗", handled)
 
     def test_clean_sender_name(self):
         self.assertEqual(clean_sender_name("LV100殿堂禄时节"), "禄时节")
@@ -119,21 +119,21 @@ class TriggerTests(unittest.TestCase):
         self.assertEqual(bottom_signature(rows, 2), ("b", "c"))
 
     def test_build_prompt(self):
-        config = {"trigger": {"group_name": "测试群", "max_context_messages": 2}}
-        rows = [row("OLDCONTEXT"), row("LV100殿堂禄时节"), row("@你的机器人昵称 今日塔罗")]
+        config = {"trigger": {"group_name": "嘛咪哄养老院", "max_context_messages": 2}}
+        rows = [row("OLDCONTEXT"), row("LV100殿堂禄时节"), row("@子思于归的使魔 今日塔罗")]
         prompt = build_prompt(rows, 2, config, "LV100殿堂禄时节")
         self.assertIn("[QQ] tier=guest", prompt)
         self.assertIn("sender_qq=group:禄时节", prompt)
-        self.assertIn("测试群", prompt)
-        self.assertIn("@你的机器人昵称 今日塔罗", prompt)
+        self.assertIn("嘛咪哄养老院", prompt)
+        self.assertIn("@子思于归的使魔 今日塔罗", prompt)
         self.assertNotIn("OLDCONTEXT", prompt)
 
 
 class MessageTests(unittest.TestCase):
     def test_parse_messages_marks_self(self):
         rows = [
-            row("LV100TestUser", x0=60),
-            row("@你的机器人昵称 今日塔罗", x0=70),
+            row("LV100劳模子思于归", x0=60),
+            row("@子思于归的使魔 今日塔罗", x0=70),
             row("LV2初研", x0=600),
             row("Grindelwald，逆位。", x0=70),
             row("+1", x0=70),
@@ -141,7 +141,7 @@ class MessageTests(unittest.TestCase):
         messages = parse_messages(rows, 650)
         self.assertEqual(len(messages), 2)
         self.assertFalse(messages[0]["self"])
-        self.assertEqual(messages[0]["sender"], "TestUser")
+        self.assertEqual(messages[0]["sender"], "劳模子思于归")
         self.assertTrue(messages[1]["self"])
         self.assertEqual(messages[1]["sender"], "初研")
 
@@ -157,7 +157,7 @@ class MessageTests(unittest.TestCase):
     def test_find_ambient_message(self):
         messages = [
             {"sender": "A", "self": False, "text": "今天天气不错"},
-            {"sender": "B", "self": False, "text": "@你的机器人昵称 今日塔罗"},
+            {"sender": "B", "self": False, "text": "@子思于归的使魔 今日塔罗"},
             {"sender": "初研", "self": True, "text": "..."},
         ]
         self.assertEqual(find_ambient_message(messages, NICKNAME)["text"], "今天天气不错")
@@ -169,7 +169,7 @@ class MessageTests(unittest.TestCase):
 
     def test_find_followup_message(self):
         messages = [
-            {"sender": "A", "self": False, "text": "@你的机器人昵称 今日塔罗"},
+            {"sender": "A", "self": False, "text": "@子思于归的使魔 今日塔罗"},
             {"sender": "A", "self": False, "text": "什么意思"},
             {"sender": "初研", "self": True, "text": "[你]: 塔罗的解读是……"},
         ]
@@ -178,7 +178,7 @@ class MessageTests(unittest.TestCase):
         self.assertIsNone(find_followup_message(messages, NICKNAME, ""))
 
     def test_build_followup_prompt(self):
-        config = {"trigger": {"group_name": "测试群"}, "ambient": {"context_messages": 12}}
+        config = {"trigger": {"group_name": "嘛咪哄养老院"}, "ambient": {"context_messages": 12}}
         messages = [
             {"sender": "A", "self": False, "text": "什么意思"},
             {"sender": "初研", "self": True, "text": "塔罗的解读是……"},
@@ -192,11 +192,11 @@ class MessageTests(unittest.TestCase):
 
     def test_classify_chat(self):
         config = {
-            "trigger": {"group_name": "测试群", "group_match": "测试群"},
-            "memory": {"private_match": "TestBot"},
+            "trigger": {"group_name": "嘛咪哄养老院", "group_match": "养老院"},
+            "memory": {"private_match": "Raven"},
         }
-        self.assertEqual(classify_chat("测试群(64)", config), "group")
-        self.assertEqual(classify_chat("TestBot", config), "private")
+        self.assertEqual(classify_chat("嘛咪哄养老院(64)", config), "group")
+        self.assertEqual(classify_chat("Raven", config), "private")
         self.assertEqual(classify_chat("别的东西", config), "other")
 
     def test_is_timestamp(self):
@@ -236,10 +236,10 @@ class MessageTests(unittest.TestCase):
         self.assertFalse(messages[1]["self"])
 
     def test_is_owner_private(self):
-        config = {"memory": {"private_match": "TestBot"}}
-        self.assertTrue(is_owner_private("TestBot", config))
-        self.assertTrue(is_owner_private(" TestBot ", config))
-        self.assertFalse(is_owner_private("测试群(64)", config))
+        config = {"memory": {"private_match": "Raven"}}
+        self.assertTrue(is_owner_private("Raven", config))
+        self.assertTrue(is_owner_private(" Raven ", config))
+        self.assertFalse(is_owner_private("嘛咪哄养老院(64)", config))
         self.assertFalse(is_owner_private("", config))
 
     def test_find_private_message(self):
@@ -254,8 +254,8 @@ class MessageTests(unittest.TestCase):
 
     def test_build_owner_prompt(self):
         config = {
-            "qq": {"owner_qq": "123456789"},
-            "trigger": {"group_name": "测试群"},
+            "qq": {"owner_qq": "873447614"},
+            "trigger": {"group_name": "嘛咪哄养老院"},
             "ambient": {"context_messages": 12},
         }
         messages = [
@@ -264,7 +264,7 @@ class MessageTests(unittest.TestCase):
         ]
         prompt = build_owner_prompt(messages, config)
         self.assertIn("[QQ] tier=owner", prompt)
-        self.assertIn("sender_qq=123456789", prompt)
+        self.assertIn("sender_qq=873447614", prompt)
         self.assertIn("msg_id=private-", prompt)
         self.assertIn("[你]: 好的主人", prompt)
         self.assertIn("帮我看下磁盘", prompt)
@@ -278,16 +278,16 @@ class MemoryRecorderTests(unittest.TestCase):
             private_spool = Path(tmp) / "private.jsonl"
             recorder = MemoryRecorder(str(group_spool), str(private_spool))
             rows = [
-                {"text": "LV100TestUser", "x0": 60, "y": 1},
-                {"text": "@你的机器人昵称 今日塔罗", "x0": 70, "y": 2},
+                {"text": "LV100劳模子思于归", "x0": 60, "y": 1},
+                {"text": "@子思于归的使魔 今日塔罗", "x0": 70, "y": 2},
                 {"text": "12:34", "x0": 300, "y": 3},
                 {"text": "+1", "x0": 70, "y": 4},
             ]
-            self.assertEqual(recorder.record("group", "测试群", rows), 1)
+            self.assertEqual(recorder.record("group", "嘛咪哄养老院", rows), 1)
             lines = group_spool.read_text(encoding="utf-8").splitlines()
             self.assertEqual(len(lines), 1)
             data = json.loads(lines[0])
-            self.assertEqual(data["sender"], "TestUser")
+            self.assertEqual(data["sender"], "劳模子思于归")
             self.assertIn("今日塔罗", data["text"])
 
     def test_private_and_group_spools_are_separate(self):
@@ -378,15 +378,15 @@ class OutboxTests(unittest.TestCase):
 
     def test_find_sidebar_row(self):
         rows = [
-            row("TestBot", x0=90, y=143),
+            row("Raven", x0=90, y=143),
             row("喂，主人，就甩我一个…", x0=100, y=165),
-            row("测试群", x0=90, y=215),
+            row("嘛咪哄养老院", x0=90, y=215),
             row("12:34", x0=250, y=215),
         ]
-        hit = find_sidebar_row(rows, "测试群")
+        hit = find_sidebar_row(rows, "养老院")
         self.assertAlmostEqual(hit["y"], 215)
         self.assertAlmostEqual(hit["x"], 190)
-        self.assertEqual(find_sidebar_row(rows, "TestBot")["y"], 143)
+        self.assertEqual(find_sidebar_row(rows, "Raven")["y"], 143)
         self.assertIsNone(find_sidebar_row(rows, "不存在"))
         self.assertIsNone(find_sidebar_row(rows, ""))
         self.assertIsNone(find_sidebar_row(rows, "12:34"))
@@ -395,23 +395,23 @@ class OutboxTests(unittest.TestCase):
 class SidebarTests(unittest.TestCase):
     def sidebar_rows(self):
         return [
-            row("TestBot01:54", x0=64, y=13),
+            row("Raven01:54", x0=64, y=13),
             row("让你修复这个漏洞，能兼顾私..", x0=65, y=35),
-            row("测试群01:51", x0=64, y=77),
-            row("[有人@我]TestUser：@子1", x0=65, y=99),
+            row("嘛咪哄养老院01:51", x0=64, y=77),
+            row("[有人@我]子思于归：@子1", x0=65, y=99),
             row("QQ游戏中心05/22", x0=65, y=141),
             row("预约解锁异人夏禾带走礼包", x0=64, y=163),
         ]
 
     def test_clean_title(self):
-        self.assertEqual(clean_title("测试群01:51"), "测试群")
-        self.assertEqual(clean_title("TestBot昨天"), "TestBot")
+        self.assertEqual(clean_title("嘛咪哄养老院01:51"), "嘛咪哄养老院")
+        self.assertEqual(clean_title("Raven昨天"), "Raven")
         self.assertEqual(clean_title("QQ游戏中心05/22"), "QQ游戏中心")
-        self.assertEqual(clean_title("TestBot"), "TestBot")
+        self.assertEqual(clean_title("Raven"), "Raven")
 
     def test_conversation_entries(self):
         entries = conversation_entries(self.sidebar_rows())
-        self.assertEqual([entry["title"] for entry in entries], ["TestBot", "测试群", "QQ游戏中心"])
+        self.assertEqual([entry["title"] for entry in entries], ["Raven", "嘛咪哄养老院", "QQ游戏中心"])
         self.assertFalse(entries[0]["unread"])
         self.assertTrue(entries[1]["unread"])
 
@@ -433,23 +433,23 @@ class SidebarTests(unittest.TestCase):
 
     def test_unread_entries_ignore(self):
         entries = [
-            {"title": "测试群", "unread": True},
+            {"title": "嘛咪哄养老院", "unread": True},
             {"title": "QQ游戏中心", "unread": True},
-            {"title": "TestBot", "unread": False},
+            {"title": "Raven", "unread": False},
         ]
         result = unread_entries(entries, ["QQ游戏中心"])
-        self.assertEqual([entry["title"] for entry in result], ["测试群"])
+        self.assertEqual([entry["title"] for entry in result], ["嘛咪哄养老院"])
 
 
 class ChatStateTests(unittest.TestCase):
     def test_chat_key(self):
-        self.assertEqual(chat_key("测试群(64)", "group"), "group")
-        self.assertEqual(chat_key("TestBot", "private"), "private:TestBot")
+        self.assertEqual(chat_key("嘛咪哄养老院(64)", "group"), "group")
+        self.assertEqual(chat_key("Raven", "private"), "private:Raven")
 
     def test_chat_state_isolated_per_chat(self):
         states = {}
         group = chat_state(states, "group")
-        private = chat_state(states, "private:TestBot")
+        private = chat_state(states, "private:Raven")
         group["triggers"]["@我"] = 1
         self.assertEqual(private["triggers"], {})
         self.assertIsNone(private["signature"])
