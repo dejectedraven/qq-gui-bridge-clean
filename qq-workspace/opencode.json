@@ -1,0 +1,107 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "agent": {
+    "qq-owner": {
+      "description": "QQ owner (123456789) full-permission assistant",
+      "mode": "primary",
+      "model": "opencode/deepseek-v4.1-flash-free",
+      "permission": {
+        "*": "allow"
+      }
+    },
+    "qq-guest": {
+      "description": "QQ guest restricted assistant",
+      "mode": "primary",
+      "model": "opencode/deepseek-v4.1-flash-free",
+      "permission": {
+        "*": "deny",
+        "read": {
+          "*": "deny",
+          "AGENTS.md": "allow",
+          "public/**": "allow",
+          "tmp/**": "allow",
+          "tools/hp_tarot/**": "allow",
+          "tools/memory/**": "allow",
+          ".opencode/skills/**": "allow",
+          "tools/hp_kb/**": "allow"
+        },
+        "list": {
+          "*": "deny",
+          "public/**": "allow",
+          "tmp/**": "allow",
+          "tools/hp_tarot/**": "allow",
+          "tools/memory/**": "allow",
+          ".opencode/skills/**": "allow",
+          "tools/hp_kb/**": "allow"
+        },
+        "glob": {
+          "*": "deny",
+          "public/**": "allow",
+          "tmp/**": "allow",
+          "tools/hp_tarot/**": "allow",
+          "tools/memory/**": "allow",
+          ".opencode/skills/**": "allow",
+          "tools/hp_kb/**": "allow"
+        },
+        "grep": {
+          "*": "deny",
+          "public/**": "allow",
+          "tmp/**": "allow",
+          "tools/hp_tarot/**": "allow",
+          "tools/memory/**": "allow",
+          ".opencode/skills/**": "allow",
+          "tools/hp_kb/**": "allow"
+        },
+        "edit": {
+          "*": "deny",
+          "tmp/**": "allow"
+        },
+        "bash": {
+          "*": "deny",
+          "python tmp/*": "allow",
+          "python tmp\\*": "allow",
+          "python3 tmp/*": "allow",
+          "python3 tmp\\*": "allow",
+          "py tmp/*": "allow",
+          "py tmp\\*": "allow",
+          "node tmp/*": "allow",
+          "node tmp\\*": "allow",
+          "python tools/hp_tarot/draw.py*": "allow",
+          "python tools\\hp_tarot\\draw.py*": "allow",
+          "python3 tools/hp_tarot/draw.py*": "allow",
+          "python3 tools\\hp_tarot\\draw.py*": "allow",
+          "py tools/hp_tarot/draw.py*": "allow",
+          "py tools\\hp_tarot\\draw.py*": "allow",
+          "python tools/memory/search_group.py*": "allow",
+          "python tools\\memory\\search_group.py*": "allow",
+          "python3 tools/memory/search_group.py*": "allow",
+          "python3 tools\\memory\\search_group.py*": "allow",
+          "py tools/memory/search_group.py*": "allow",
+          "py tools\\memory\\search_group.py*": "allow",
+          "python tools/hp_kb/search.py*": "allow",
+          "python tools/hp_kb/quiz.py*": "allow",
+          "python tools\\hp_kb\\search.py*": "allow",
+          "python tools\\hp_kb\\quiz.py*": "allow",
+          "python3 tools/hp_kb/search.py*": "allow",
+          "python3 tools/hp_kb/quiz.py*": "allow",
+          "python3 tools\\hp_kb\\search.py*": "allow",
+          "python3 tools\\hp_kb\\quiz.py*": "allow",
+          "py tools/hp_kb/search.py*": "allow",
+          "py tools/hp_kb/quiz.py*": "allow",
+          "py tools\\hp_kb\\search.py*": "allow",
+          "py tools\\hp_kb\\quiz.py*": "allow"
+        },
+        "webfetch": "allow",
+        "websearch": "allow",
+        "skill": {
+          "*": "deny",
+          "qq-assistant": "allow"
+        },
+        "task": "deny",
+        "external_directory": "deny",
+        "question": "deny",
+        "doom_loop": "deny"
+      }
+    }
+  }
+}

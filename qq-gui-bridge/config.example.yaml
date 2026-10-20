@@ -1,0 +1,90 @@
+qq:
+  exe: "C:\\path\\to\\QQ.exe"
+  account_nickname: "你的小号昵称"
+  owner_qq: "你的主号QQ"
+
+window:
+  rect: [1280, 0, 2560, 1392]
+  header_rect: [300, 40, 600, 90]
+  chat_rect: [300, 90, 950, 1270]
+  sidebar_rect: [55, 100, 305, 780]
+  input_point: [600, 1295]
+
+trigger:
+  group_name: "你的测试群"
+  group_match: "测试群"
+  require_at: true
+  ignore_self: true
+  max_context_messages: 15
+
+memory:
+  enabled: true
+  workspace: "C:\\path\\to\\qq-workspace"
+  group_spool: "C:\\path\\to\\qq-workspace\\memory\\group_spool.jsonl"
+  private_spool: "C:\\path\\to\\qq-workspace\\memory\\private_spool.jsonl"
+  private_match: "主人的昵称"
+  record_other_as_private: true
+  rag_limit: 4
+
+ambient:
+  enabled: true
+  min_interval_sec: 60
+  context_messages: 12
+  max_chars: 120
+
+reply:
+  quote: false
+  max_chars: 500
+  owner_max_chars: 1500
+  restore_foreground: true
+
+outbox:
+  enabled: true
+  path: "C:\\path\\to\\qq-workspace\\memory\\outbox.jsonl"
+
+sidebar:
+  enabled: true
+  scan_interval_sec: 5
+  startup_delay_sec: 5
+  row_gap: 30
+  badge_left_ratio: 0.5
+  ignore:
+    - "QQ游戏中心"
+    - "QQ邮箱"
+
+ocr:
+  min_score: 0.5
+  y_tol: 7
+
+poll:
+  interval_sec: 2.0
+
+permissions:
+  owner_private_full: true
+  group_default_tier: guest
+  group_owner_upgrade: false
+  guest_allow_web: true
+  guest_tmp_dir: "C:\\path\\to\\qq-workspace\\tmp"
+  cleanup_tmp_after_reply: true
+
+opencode:
+  base_url: "http://127.0.0.1:4100"
+  agent: "qq-guest"
+  owner_agent: "qq-owner"
+  model: "opencode/deepseek-v4.1-flash-free"
+  timeout_sec: 600
+  keep_sessions: true
+  session_state: "C:\\path\\to\\qq-workspace\\memory\\bridge_sessions.json"
+  auto_start: true
+  server_command: "C:\\Users\\youruser\\AppData\\Roaming\\npm\\node_modules\\opencode-ai\\bin\\opencode.exe"
+  server_cwd: "C:\\path\\to\\qq-workspace"
+  username_env: "OPENCODE_SERVER_USERNAME"
+  password_env: "OPENCODE_SERVER_PASSWORD"
+
+focus:
+  mode: "foreground"
+  restore_foreground: true
+
+logging:
+  dir: "logs"
+  level: "INFO"

@@ -1,0 +1,9 @@
+﻿__pycache__/
+*.pyc
+logs/
+.venv/
+tmp/
+.pytest_cache/
+config.yaml
+memory/*.db
+memory/*.jsonl
