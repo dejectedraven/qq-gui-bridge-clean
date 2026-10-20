@@ -156,6 +156,22 @@ def send_image(hwnd, point, image_path, caption="", restore=True) -> bool:
     return True
 
 
+def scroll_to_bottom(hwnd, point, clicks=30, restore=True) -> bool:
+    previous = win32gui.GetForegroundWindow()
+    if not focus_window(hwnd):
+        return False
+    pyautogui.moveTo(point[0], point[1])
+    time.sleep(0.1)
+    pyautogui.scroll(-abs(int(clicks)))
+    time.sleep(0.5)
+    if restore and previous and previous != hwnd:
+        try:
+            win32gui.SetForegroundWindow(previous)
+        except Exception:
+            pass
+    return True
+
+
 def click_point(hwnd, point, restore=False) -> bool:
     previous = win32gui.GetForegroundWindow()
     if not focus_window(hwnd):

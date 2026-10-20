@@ -32,6 +32,7 @@ from bridge.window import (
     focus_window,
     get_window_rect,
     move_window,
+    scroll_to_bottom,
     send_image,
     send_text,
 )
@@ -328,6 +329,12 @@ def open_unread_chat(hwnd, engine: OcrEngine, window_options: dict, config: dict
             continue
         if not open_sidebar_entry(hwnd, window_rect, sidebar_rect, entry):
             LOG.warning("sidebar click failed: %s", entry["title"])
+            continue
+        time.sleep(1.2)
+        header = read_header(engine, get_window_rect(hwnd), window_options["header_rect"])
+        header_value = normalize(header)
+        if title and title not in header_value and header_value not in title:
+            LOG.warning("sidebar open verify failed: want=%s header=%s", entry["title"], header)
             continue
         if seen is not None:
             seen[title] = entry["preview"]
@@ -730,6 +737,7 @@ def run(config: dict, once: bool = False, dry_run: bool = False) -> int:
     sidebar_enabled = bool(sidebar_options.get("enabled", False)) and bool(window_options.get("sidebar_rect"))
     sidebar_interval = float(sidebar_options.get("scan_interval_sec", 5))
     next_sidebar_scan = time.time() + float(sidebar_options.get("startup_delay_sec", 5))
+    sidebar_cooldown_until = 0.0
     next_server_check = time.time() + 60
 
     LOG.info(
@@ -758,7 +766,7 @@ def run(config: dict, once: bool = False, dry_run: bool = False) -> int:
                 time.sleep(interval)
                 continue
 
-        if sidebar_enabled and time.time() >= next_sidebar_scan:
+        if sidebar_enabled and time.time() >= next_sidebar_scan and time.time() >= sidebar_cooldown_until:
             next_sidebar_scan = time.time() + sidebar_interval
             try:
                 opened = None if dry_run else open_unread_chat(hwnd, engine, window_options, config, header_text, sidebar_seen)
@@ -769,6 +777,7 @@ def run(config: dict, once: bool = False, dry_run: bool = False) -> int:
                 pending_open = True
                 pending_mention = bool(opened.get("hint"))
                 settle_until = time.time() + 2.0
+                sidebar_cooldown_until = time.time() + 15.0
                 time.sleep(1.0)
                 continue
 
@@ -789,14 +798,27 @@ def run(config: dict, once: bool = False, dry_run: bool = False) -> int:
             pending_open = False
             pending_mention = False
             if state["signature"] is None or arm:
+                fallback_scan = False
                 if arm:
+                    if current_source == "group":
+                        window_rect = get_window_rect(hwnd)
+                        chat_point = absolute_point(
+                            window_rect,
+                            ((chat_rect[0] + chat_rect[2]) // 2, (chat_rect[1] + chat_rect[3]) // 2),
+                        )
+                        if scroll_to_bottom(hwnd, chat_point):
+                            time.sleep(0.4)
+                            window_rect = get_window_rect(hwnd)
+                            chat_image = capture(window_rect, chat_rect)
+                            rows = engine.read(chat_image)
                     opened_messages = parse_messages(rows, chat_width, image=chat_image)
                     last_self_y = max((item["y"] for item in opened_messages if item.get("self")), default=None)
                     trigger_index = find_trigger(rows, nickname, chat_width)
                     if last_self_y is not None and trigger_index is not None and rows[trigger_index]["y"] < last_self_y:
-                        LOG.info("armed unread chat already answered; not re-arming")
+                        LOG.info("armed unread chat already answered; falling back to normal scan")
                         arm = False
-                state["signature"] = PENDING_SIGNATURE if arm else bottom_signature(rows)
+                        fallback_scan = True
+                state["signature"] = PENDING_SIGNATURE if arm else (None if fallback_scan else bottom_signature(rows))
                 if arm:
                     LOG.info("armed unread chat: source=%s header=%s", current_source, header_text)
                     state["triggers"] = {}
