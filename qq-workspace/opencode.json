@@ -20,37 +20,29 @@
           "AGENTS.md": "allow",
           "public/**": "allow",
           "tmp/**": "allow",
-          "tools/hp_tarot/**": "allow",
           "tools/memory/**": "allow",
-          ".opencode/skills/**": "allow",
-          "tools/hp_kb/**": "allow"
+          ".opencode/skills/**": "allow"
         },
         "list": {
           "*": "deny",
           "public/**": "allow",
           "tmp/**": "allow",
-          "tools/hp_tarot/**": "allow",
           "tools/memory/**": "allow",
-          ".opencode/skills/**": "allow",
-          "tools/hp_kb/**": "allow"
+          ".opencode/skills/**": "allow"
         },
         "glob": {
           "*": "deny",
           "public/**": "allow",
           "tmp/**": "allow",
-          "tools/hp_tarot/**": "allow",
           "tools/memory/**": "allow",
-          ".opencode/skills/**": "allow",
-          "tools/hp_kb/**": "allow"
+          ".opencode/skills/**": "allow"
         },
         "grep": {
           "*": "deny",
           "public/**": "allow",
           "tmp/**": "allow",
-          "tools/hp_tarot/**": "allow",
           "tools/memory/**": "allow",
-          ".opencode/skills/**": "allow",
-          "tools/hp_kb/**": "allow"
+          ".opencode/skills/**": "allow"
         },
         "edit": {
           "*": "deny",
@@ -66,30 +58,12 @@
           "py tmp\\*": "allow",
           "node tmp/*": "allow",
           "node tmp\\*": "allow",
-          "python tools/hp_tarot/draw.py*": "allow",
-          "python tools\\hp_tarot\\draw.py*": "allow",
-          "python3 tools/hp_tarot/draw.py*": "allow",
-          "python3 tools\\hp_tarot\\draw.py*": "allow",
-          "py tools/hp_tarot/draw.py*": "allow",
-          "py tools\\hp_tarot\\draw.py*": "allow",
           "python tools/memory/search_group.py*": "allow",
           "python tools\\memory\\search_group.py*": "allow",
           "python3 tools/memory/search_group.py*": "allow",
           "python3 tools\\memory\\search_group.py*": "allow",
           "py tools/memory/search_group.py*": "allow",
-          "py tools\\memory\\search_group.py*": "allow",
-          "python tools/hp_kb/search.py*": "allow",
-          "python tools/hp_kb/quiz.py*": "allow",
-          "python tools\\hp_kb\\search.py*": "allow",
-          "python tools\\hp_kb\\quiz.py*": "allow",
-          "python3 tools/hp_kb/search.py*": "allow",
-          "python3 tools/hp_kb/quiz.py*": "allow",
-          "python3 tools\\hp_kb\\search.py*": "allow",
-          "python3 tools\\hp_kb\\quiz.py*": "allow",
-          "py tools/hp_kb/search.py*": "allow",
-          "py tools/hp_kb/quiz.py*": "allow",
-          "py tools\\hp_kb\\search.py*": "allow",
-          "py tools\\hp_kb\\quiz.py*": "allow"
+          "py tools\\memory\\search_group.py*": "allow"
         },
         "webfetch": "allow",
         "websearch": "allow",

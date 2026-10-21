@@ -40,7 +40,7 @@ from bridge.sidebar import (
     unread_entries,
 )
 
-NICKNAME = "子思于归的使魔"
+NICKNAME = "测试昵称"
 
 
 def client_config():
@@ -59,41 +59,41 @@ def row(text, x0=0, y=0):
 
 class TriggerTests(unittest.TestCase):
     def test_trigger_row(self):
-        self.assertTrue(is_trigger_row(row("@子思于归的使魔 今日塔罗"), NICKNAME, 650))
-        self.assertFalse(is_trigger_row(row("LV100殿堂子思于归的使魔"), NICKNAME, 650))
+        self.assertTrue(is_trigger_row(row("@测试昵称 今日天气"), NICKNAME, 650))
+        self.assertFalse(is_trigger_row(row("LV100殿堂测试昵称"), NICKNAME, 650))
         self.assertFalse(is_trigger_row(row("12:34"), NICKNAME, 650))
-        self.assertFalse(is_trigger_row(row("@子思于归的使魔 今日塔罗", x0=500), NICKNAME, 650))
+        self.assertFalse(is_trigger_row(row("@测试昵称 今日天气", x0=500), NICKNAME, 650))
 
     def test_find_last_trigger(self):
         rows = [
             row("hello"),
-            row("@子思于归的使魔 A"),
+            row("@测试昵称 A"),
             row("other"),
-            row("@子思于归的使魔 B"),
+            row("@测试昵称 B"),
         ]
         self.assertEqual(find_trigger(rows, NICKNAME, 650), 3)
 
     def test_count_triggers(self):
         rows = [
             row("LV100殿堂禄时节"),
-            row("@子思于归的使魔 今日塔罗"),
+            row("@测试昵称 今日天气"),
             row("LV100殿堂禄时节"),
-            row("@子思于归的使魔 今日塔罗"),
+            row("@测试昵称 今日天气"),
             row("LV100殿堂禄时节"),
-            row("@子思于归的使魔 今日塔罗"),
+            row("@测试昵称 今日天气"),
         ]
         present = count_triggers(rows, NICKNAME, 650)
-        self.assertEqual(present["@子思于归的使魔今日塔罗"], 3)
+        self.assertEqual(present["@测试昵称今日天气"], 3)
 
     def test_trigger_key_survives_sender_flap(self):
-        without_label = [row("@子思于归的使魔 我喜欢你", x0=70)]
-        with_label = [row("LV100殿堂禄时节", x0=60), row("@子思于归的使魔 我喜欢你", x0=70)]
-        key = "@子思于归的使魔我喜欢你"
+        without_label = [row("@测试昵称 我喜欢你", x0=70)]
+        with_label = [row("LV100殿堂禄时节", x0=60), row("@测试昵称 我喜欢你", x0=70)]
+        key = "@测试昵称我喜欢你"
         self.assertEqual(count_triggers(without_label, NICKNAME, 650), {key: 1})
         self.assertEqual(count_triggers(with_label, NICKNAME, 650), {key: 1})
 
     def test_prime_suppresses_existing_triggers(self):
-        rows = [row("LV2初研", x0=60), row("@子思于归的使魔 早安", x0=70)]
+        rows = [row("LV2初研", x0=60), row("@测试昵称 早安", x0=70)]
         primed = count_triggers(rows, NICKNAME, 650)
         self.assertEqual(len(primed), 1)
         handled = dict(primed)
@@ -101,11 +101,11 @@ class TriggerTests(unittest.TestCase):
         self.assertEqual(handled, primed)
 
     def test_update_handled_counts(self):
-        handled = {"@子思于归的使魔今日塔罗": 2}
-        update_handled_counts(handled, {"@子思于归的使魔今日塔罗": 1})
-        self.assertEqual(handled["@子思于归的使魔今日塔罗"], 1)
+        handled = {"@测试昵称今日天气": 2}
+        update_handled_counts(handled, {"@测试昵称今日天气": 1})
+        self.assertEqual(handled["@测试昵称今日天气"], 1)
         update_handled_counts(handled, {})
-        self.assertNotIn("@子思于归的使魔今日塔罗", handled)
+        self.assertNotIn("@测试昵称今日天气", handled)
 
     def test_clean_sender_name(self):
         self.assertEqual(clean_sender_name("LV100殿堂禄时节"), "禄时节")
@@ -120,20 +120,20 @@ class TriggerTests(unittest.TestCase):
 
     def test_build_prompt(self):
         config = {"trigger": {"group_name": "嘛咪哄养老院", "max_context_messages": 2}}
-        rows = [row("OLDCONTEXT"), row("LV100殿堂禄时节"), row("@子思于归的使魔 今日塔罗")]
+        rows = [row("OLDCONTEXT"), row("LV100殿堂禄时节"), row("@测试昵称 今日天气")]
         prompt = build_prompt(rows, 2, config, "LV100殿堂禄时节")
         self.assertIn("[QQ] tier=guest", prompt)
         self.assertIn("sender_qq=group:禄时节", prompt)
         self.assertIn("嘛咪哄养老院", prompt)
-        self.assertIn("@子思于归的使魔 今日塔罗", prompt)
+        self.assertIn("@测试昵称 今日天气", prompt)
         self.assertNotIn("OLDCONTEXT", prompt)
 
 
 class MessageTests(unittest.TestCase):
     def test_parse_messages_marks_self(self):
         rows = [
-            row("LV100劳模子思于归", x0=60),
-            row("@子思于归的使魔 今日塔罗", x0=70),
+            row("LV100劳模测试昵称", x0=60),
+            row("@测试昵称 今日天气", x0=70),
             row("LV2初研", x0=600),
             row("Grindelwald，逆位。", x0=70),
             row("+1", x0=70),
@@ -141,7 +141,7 @@ class MessageTests(unittest.TestCase):
         messages = parse_messages(rows, 650)
         self.assertEqual(len(messages), 2)
         self.assertFalse(messages[0]["self"])
-        self.assertEqual(messages[0]["sender"], "劳模子思于归")
+        self.assertEqual(messages[0]["sender"], "劳模测试昵称")
         self.assertTrue(messages[1]["self"])
         self.assertEqual(messages[1]["sender"], "初研")
 
@@ -157,7 +157,7 @@ class MessageTests(unittest.TestCase):
     def test_find_ambient_message(self):
         messages = [
             {"sender": "A", "self": False, "text": "今天天气不错"},
-            {"sender": "B", "self": False, "text": "@子思于归的使魔 今日塔罗"},
+            {"sender": "B", "self": False, "text": "@测试昵称 今日天气"},
             {"sender": "初研", "self": True, "text": "..."},
         ]
         self.assertEqual(find_ambient_message(messages, NICKNAME)["text"], "今天天气不错")
@@ -169,9 +169,9 @@ class MessageTests(unittest.TestCase):
 
     def test_find_followup_message(self):
         messages = [
-            {"sender": "A", "self": False, "text": "@子思于归的使魔 今日塔罗"},
+            {"sender": "A", "self": False, "text": "@测试昵称 今日天气"},
             {"sender": "A", "self": False, "text": "什么意思"},
-            {"sender": "初研", "self": True, "text": "[你]: 塔罗的解读是……"},
+            {"sender": "初研", "self": True, "text": "[你]: 天气不错……"},
         ]
         self.assertEqual(find_followup_message(messages, NICKNAME, "A")["text"], "什么意思")
         self.assertIsNone(find_followup_message(messages, NICKNAME, "B"))
@@ -181,13 +181,13 @@ class MessageTests(unittest.TestCase):
         config = {"trigger": {"group_name": "嘛咪哄养老院"}, "ambient": {"context_messages": 12}}
         messages = [
             {"sender": "A", "self": False, "text": "什么意思"},
-            {"sender": "初研", "self": True, "text": "塔罗的解读是……"},
+            {"sender": "初研", "self": True, "text": "天气不错……"},
         ]
         prompt = build_followup_prompt(messages, config, "A")
         self.assertIn("[QQ] tier=guest", prompt)
         self.assertIn("sender_qq=group:A", prompt)
         self.assertIn("msg_id=followup-", prompt)
-        self.assertIn("[你]: 塔罗的解读是……", prompt)
+        self.assertIn("[你]: 天气不错……", prompt)
         self.assertIn("什么意思", prompt)
 
     def test_classify_chat(self):
@@ -278,8 +278,8 @@ class MemoryRecorderTests(unittest.TestCase):
             private_spool = Path(tmp) / "private.jsonl"
             recorder = MemoryRecorder(str(group_spool), str(private_spool))
             rows = [
-                {"text": "LV100劳模子思于归", "x0": 60, "y": 1},
-                {"text": "@子思于归的使魔 今日塔罗", "x0": 70, "y": 2},
+                {"text": "LV100劳模测试昵称", "x0": 60, "y": 1},
+                {"text": "@测试昵称 今日天气", "x0": 70, "y": 2},
                 {"text": "12:34", "x0": 300, "y": 3},
                 {"text": "+1", "x0": 70, "y": 4},
             ]
@@ -287,8 +287,8 @@ class MemoryRecorderTests(unittest.TestCase):
             lines = group_spool.read_text(encoding="utf-8").splitlines()
             self.assertEqual(len(lines), 1)
             data = json.loads(lines[0])
-            self.assertEqual(data["sender"], "劳模子思于归")
-            self.assertIn("今日塔罗", data["text"])
+            self.assertEqual(data["sender"], "劳模测试昵称")
+            self.assertIn("今日天气", data["text"])
 
     def test_private_and_group_spools_are_separate(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -398,7 +398,7 @@ class SidebarTests(unittest.TestCase):
             row("Raven01:54", x0=64, y=13),
             row("让你修复这个漏洞，能兼顾私..", x0=65, y=35),
             row("嘛咪哄养老院01:51", x0=64, y=77),
-            row("[有人@我]子思于归：@子1", x0=65, y=99),
+            row("[有人@我]测试昵称：@子1", x0=65, y=99),
             row("QQ游戏中心05/22", x0=65, y=141),
             row("预约解锁异人夏禾带走礼包", x0=64, y=163),
         ]

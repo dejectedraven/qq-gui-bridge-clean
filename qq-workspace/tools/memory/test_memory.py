@@ -22,7 +22,7 @@ class MemoryTests(unittest.TestCase):
                 "chat": "测试群",
                 "sender": "TestUser",
                 "sender_id": "group:TestUser",
-                "text": "@你的机器人昵称 今日塔罗",
+                "text": "@你的机器人昵称 今日天气",
             },
             {
                 "ts": "2026-10-19T23:25:00+08:00",
@@ -53,9 +53,9 @@ class MemoryTests(unittest.TestCase):
         stats = sync_spool(self.db, self.spool, embed_enabled=False)
         self.assertEqual(stats["added"], 3)
         conn = connect(self.db)
-        results = search_messages(conn, "塔罗", None, 5)
+        results = search_messages(conn, "天气", None, 5)
         self.assertTrue(results)
-        self.assertIn("塔罗", results[0]["text"])
+        self.assertIn("天气", results[0]["text"])
         conn.close()
 
     def test_sync_is_idempotent(self):

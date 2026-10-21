@@ -26,7 +26,7 @@ QQ GUI bridge
 群聊内检索（guest 可用）：
 
 ```bash
-python tools/memory/search_group.py --query "上次说的塔罗" --limit 5 --json
+python tools/memory/search_group.py --query "上次说的游戏" --limit 5 --json
 ```
 
 通用检索（owner / 调试）：
