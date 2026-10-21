@@ -97,7 +97,7 @@ cd C:\path\to\qq-gui-bridge
 .\qq-bridge-toggle.ps1 -Action status    # 查看状态
 ```
 
-关闭会同时结束看护、桥接和 41873 端口上的 OpenCode Server；开启时由看护自动拉起桥接与 server。
+关闭会同时结束看护、桥接和 41873 端口上的 OpenCode Server；开启时由看护自动拉起桥接与 server。完整说明见 `qq-bridge-toggle.md`。
 
 ## 触发条件
 
